@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chest X-ray Pneumonia Classifier</title>
+    <meta name="description"
+          content="EfficientNetB0 chest X-ray classification project">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+<header class="nav">
+    <div class="brand">
+        <span class="brand-mark">CX</span>
+        <div>
+            <strong>ChestXray AI</strong>
+            <small>Research Demo</small>
+        </div>
+    </div>
+
+    <div class="nav-actions">
+        <span class="author-chip">Built by <strong>Govind Suthar</strong></span>
+        <a class="github-link"
+           href="https://github.com/Govind99603/pneumonia_chest_xray"
+           target="_blank"
+           rel="noopener">
+            GitHub ↗
+        </a>
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="hero-copy">
+            <div class="eyebrow">DEEP LEARNING · MEDICAL IMAGE CLASSIFICATION</div>
+            <h1>Chest X-ray<br><span>Pneumonia Classifier</span></h1>
+            <p class="hero-text">
+                Upload a chest X-ray and run the trained EfficientNetB0 model
+                to obtain a NORMAL or PNEUMONIA classification with probability
+                estimates.
+            </p>
+
+            <div class="hero-tags">
+                <span>EfficientNetB0</span>
+                <span>224 × 224</span>
+                <span>Transfer Learning</span>
+            </div>
+        </div>
+
+        <div class="hero-card">
+            <div class="scan-lines"></div>
+            <div class="xray-icon">
+                <div class="lung left"></div>
+                <div class="lung right"></div>
+                <div class="spine"></div>
+            </div>
+            <p>AI-assisted image analysis</p>
+        </div>
+    </section>
+
+    <section class="workspace">
+        <div class="upload-card">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">01 · INPUT</span>
+                    <h2>Upload chest X-ray</h2>
+                </div>
+                <span class="format-note">PNG · JPG · WEBP</span>
+            </div>
+
+            <label class="dropzone" id="dropzone" for="fileInput">
+                <input id="fileInput"
+                       type="file"
+                       accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp">
+                <div class="upload-icon">↑</div>
+                <h3>Drop your X-ray here</h3>
+                <p>or click to browse your computer</p>
+                <span class="file-limit">Maximum file size: 10 MB</span>
+            </label>
+
+            <div class="preview-wrap hidden" id="previewWrap">
+                <img id="preview" alt="Selected chest X-ray preview">
+                <div class="preview-meta">
+                    <span id="fileName"></span>
+                    <button type="button" id="removeFile">Remove</button>
+                </div>
+            </div>
+
+            <button class="primary-btn" id="analyzeBtn" disabled>
+                <span id="btnText">Analyze X-ray</span>
+                <span class="spinner hidden" id="spinner"></span>
+            </button>
+
+            <div class="error hidden" id="errorBox"></div>
+        </div>
+
+        <div class="result-card">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">02 · RESULT</span>
+                    <h2>Model prediction</h2>
+                </div>
+                <span class="threshold">Threshold 0.50</span>
+            </div>
+
+            <div class="empty-result" id="emptyResult">
+                <div class="result-symbol">◎</div>
+                <h3>Waiting for an image</h3>
+                <p>
+                    Upload a chest X-ray and click Analyze X-ray to see the
+                    prediction.
+                </p>
+            </div>
+
+            <div class="prediction hidden" id="prediction">
+                <div class="prediction-top">
+                    <div>
+                        <span class="result-label">Predicted class</span>
+                        <h3 id="predictionLabel">—</h3>
+                    </div>
+                    <div class="confidence" id="confidence">—</div>
+                </div>
+
+                <div class="probability-row">
+                    <div>
+                        <span>NORMAL</span>
+                        <strong id="normalProbability">—</strong>
+                    </div>
+                    <div>
+                        <span>PNEUMONIA</span>
+                        <strong id="pneumoniaProbability">—</strong>
+                    </div>
+                </div>
+
+                <div class="bar">
+                    <div class="bar-fill" id="pneumoniaBar"></div>
+                </div>
+
+                <div class="result-note">
+                    <strong>Important:</strong>
+                    This is a machine-learning research demonstration and not
+                    a medical diagnosis. Results should not be used alone for
+                    clinical decisions.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="metrics-section">
+        <div class="section-heading center">
+            <span class="eyebrow">03 · MODEL PERFORMANCE</span>
+            <h2>Held-out test-set results</h2>
+            <p>Metrics from the project's final test evaluation at threshold 0.50.</p>
+        </div>
+
+        <div class="metric-grid">
+            <div class="metric"><span>Accuracy</span><strong>{{ metrics.accuracy }}</strong></div>
+            <div class="metric"><span>Sensitivity</span><strong>{{ metrics.sensitivity }}</strong></div>
+            <div class="metric"><span>Specificity</span><strong>{{ metrics.specificity }}</strong></div>
+            <div class="metric"><span>F1 Score</span><strong>{{ metrics.f1 }}</strong></div>
+            <div class="metric"><span>ROC-AUC</span><strong>{{ metrics.roc_auc }}</strong></div>
+            <div class="metric"><span>PR-AUC</span><strong>{{ metrics.pr_auc }}</strong></div>
+        </div>
+    </section>
+
+    <section class="about-grid">
+        <article>
+            <span class="eyebrow">MODEL</span>
+            <h2>EfficientNetB0</h2>
+            <p>
+                Transfer learning with ImageNet initialization, controlled
+                fine-tuning, data augmentation and class weighting.
+            </p>
+        </article>
+
+        <article>
+            <span class="eyebrow">EVALUATION</span>
+            <h2>624 test images</h2>
+            <p>
+                Final confusion matrix: 173 true negatives, 61 false positives,
+                14 false negatives and 376 true positives.
+            </p>
+        </article>
+
+        <article>
+            <span class="eyebrow">EXPLAINABILITY</span>
+            <h2>Grad-CAM ready</h2>
+            <p>
+                The project includes Grad-CAM experimentation in the notebook
+                for inspecting model attention and high-confidence errors.
+            </p>
+        </article>
+    </section>
+
+    <section class="disclaimer">
+        <strong>Research / portfolio project.</strong>
+        This application demonstrates an image-classification model. It has
+        not been clinically validated and should not be used as a substitute
+        for a radiologist or other qualified healthcare professional.
+    </section>
+</main>
+
+<footer>
+    <div class="footer-left">
+        <span>ChestXray AI · Pneumonia Classification Project</span>
+        <span>Built with Flask + TensorFlow</span>
+    </div>
+    <div class="footer-author">
+        <span class="author-label">DESIGNED &amp; DEVELOPED BY</span>
+        <strong>Govind Suthar</strong>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

@@ -21,4 +21,5 @@ uvicorn
 pathlib
 tensorflow
 keras
+pillow
 
