@@ -19,16 +19,6 @@ fastapi
 python-multipart
 uvicorn
 pathlib
-os
-random
-zipfile
-json
-shutil
 tensorflow
 keras
-sklearn
-metrics
-model_selection
-matplotlib.pyplot
-plt
-seaborn
+
