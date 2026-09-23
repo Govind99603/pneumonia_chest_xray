@@ -407,8 +407,6 @@ The website was designed to work across:
 
 ### 🌍 Live Website
 
-> **Live Demo:** Replace `https://chest-xray-ai-model-by-govind-suthar.onrender.com/` in this README with your actual Render URL after deployment.
-
 [🚀 Open ChestXray AI Live Demo](https://chest-xray-ai-model-by-govind-suthar.onrender.com/)
 
 ### 💻 Source Code
